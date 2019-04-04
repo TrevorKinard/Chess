@@ -102,11 +102,11 @@ def analyze():
     dataset = loadImage('Images/test_?.png')
 
     # Input node amount - amount of pixels in image
-    input_nodes = len(dataset[0][1:])
+    input_nodes = 32
     # hidden node amount
     hidden_nodes = 200
     # output node amount
-    output_nodes = 6
+    output_nodes = 16
 
     # Chance of the neural network to be correct
     learning_rate = 0.1
@@ -147,38 +147,6 @@ def analyze():
         else:
             print("no match!")
             pass
-
-def loadImage(imagePath):
-
-    #Array of reshaped images
-    dataset = []
-
-    # load the png image data as data set
-    for image_file_name in glob.glob(imagePath):
-        #Store the image label
-        label = image_file_name[-5:-4]
-
-        #State which image is being loaded
-        print("loading ... ", image_file_name)
-        img_array = imageio.imread(image_file_name, as_gray=True)
-
-        #Flatten the image matrix to an array and invert
-        img_data = 255.0 - img_array.reshape(784)
-
-        #Condense the image data to a range of 0.01 to 1.0
-        img_data = (img_data / 255.0 * 0.99) + 0.01
-
-        #Combine the label and image data into one array of the dataset
-        dataset.append(numpy.append(label, img_data))
-
-    return dataset
-
-#Introduction to program
-print("Athena is a neural network that does image recognition.")
-print("To train the neural network create multiple images labeled with what it is. (Letters A - F)")
-print("The images need to be 28 x 28 and named Training_N.png. N being the label of the image.")
-print("Put these multiple images in a folder named 'Training' next to Athena.py")
-print("You can then test the accuracy of the image recognition by creating 28 x 28 images\nnamed test_N.png. N being the label of the image and then putting\nthem in a folder named 'Images' next to Athena.py\n")
 
 #Create, train, and test the neural network
 analyze()
