@@ -1,0 +1,8 @@
+Enter grid coordinates for the piece you wish to move and its target
+location. The grid coordinates need to be entered all at once, with the
+selected piece and target location grid coordinates being separated by
+a space. Once typed in hit enter to submit the move. If the move is not
+valid no piece will be moved. After a valid move is inputted the AI will
+make its move.
+
+example: "c2 c4"

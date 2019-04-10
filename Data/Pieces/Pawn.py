@@ -6,7 +6,6 @@ class Pawn(Piece):
         self.name = name
         self.side = side
         self.direction = direction
-        self.start = True
 
     # All Possible moves
     def moves(self, y, x, board):
@@ -18,9 +17,8 @@ class Pawn(Piece):
         if self.canCapture(board, y + self.direction, x - self.direction) and self.noConflict(board, self.side, y + self.direction, x - self.direction):
             answers.append((y + self.direction, x - self.direction))
         # Initial move
-        if self.start and (y + self.direction, x) not in board and self.noConflict(board, self.side, y + self.direction * 2, x):
+        if y * self.direction in [-6, 1] and (y + self.direction * 2, x) not in board and self.noConflict(board, self.side, y + self.direction * 2, x):
             answers.append((y + self.direction * 2, x))
-            self.start = False
         # default move
         if self.noConflict(board, self.side, y + self.direction, x):
             answers.append((y + self.direction, x))

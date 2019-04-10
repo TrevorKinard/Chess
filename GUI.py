@@ -15,6 +15,12 @@ class GUI:
         #Set the GUI's minimum scale size
         self.win.wm_minsize(600, 600)
 
+        #Menu Bar
+        self.menu = tkinter.Menu(self.win)
+        self.menu.add_command(label="Exit", command=self.exitPlay)
+        self.win.config(menu=self.menu)
+
+
         #Button Single Player
         self.button_single = tkinter.Button(self.win, text='Single Player', command=self.play)
         self.button_single.pack()
@@ -82,8 +88,19 @@ class GUI:
 
         #show game board
         self.panel_board.pack()
+        self.menu.pack()
 
+    #Go back to menu
+    def exitPlay(self):
+        # Show menu controls
+        self.button_single.pack()
+        self.button_multi.pack()
+        self.button_how.pack()
+        self.button_exit.pack()
 
+        # hide game board
+        self.panel_board.pack_forget()
+        self.menu.pack_forget()
 
     #Instructions of chess
     def instructions(self):

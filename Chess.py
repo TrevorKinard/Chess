@@ -1,4 +1,5 @@
 from Data.Pieces import *
+import AI
 
 BLACK = "Black"
 WHITE = "White"
@@ -7,49 +8,30 @@ class Game:
     def __init__(self):
         # Turn variable (True = White | False = Black)
         self.turn = True
-        self.message = "Movement:"
         self.board = {}
         # Populate the board
         self.placePieces()
-        print("Enter moves using grid coordinates separated by a space")
-        self.main()
 
     #Game loop
-    def main(self):
-        while True:
-            # Create board
-            self.printBoard()
-            # Display Info
-            print(self.message)
-            # Reset message
-            self.message = ""
+    def play(self, intext=""):
+
+        for x in range(2):
             # Grab a segmented input
-            startpos, endpos = self.parseInput()
+            startpos, endpos = self.parseInput(intext) if not self.turn else AI.AI.move(self, self.board)
 
             #Attempt to find piece to move
-            try: target = self.board[startpos]
-            except:
-                self.message = "could not find piece; index probably out of range"
-                target = None
+            if startpos in self.board:
+                target = self.board[startpos]
 
-            if target:
                 #Display piece found
                 print("found " + str(target))
 
-                #Check piece is correct side
-                if target.side != self.turn:
-                    self.message = "you aren't allowed to move that piece this turn"
-                    continue
-
                 #Check piece can move
                 if target.isValid(startpos, endpos, self.board):
-                    # Tell player the piece can move
-                    self.message = "that is a valid move"
-
                     # Check to see if the king is in check
                     self.isCheck(target, endpos)
                     # trigger for if a king has been captured
-                    endgame = True if endpos in self.board and self.board[endpos] == King else False
+                    endgame = True if endpos in self.board and type(self.board[endpos]) == King else False
 
                     #Move piece to position
                     self.board[endpos] = self.board[startpos]
@@ -58,19 +40,17 @@ class Game:
 
                     # reset the game and state the winner
                     if endgame:
-                        print("White" if target.side else "Black" + " wins the game!\n\n")
-                        break
+                        print("White" if target.side else "Black", "wins the game!\n\n")
+                        self.board = {}
+                        self.placePieces()
                     #Switch turn
                     self.turn = not self.turn
 
                 # Warn player the specified move is not available
                 else:
-                    self.message = "invalid move" + str(target.moves(startpos[0], startpos[1], self.board))
                     print(target.moves(startpos[0], startpos[1], self.board))
 
-            # Tell the player that there is no piecce at the location
-            else:
-                self.message = "there is no piece in that space"
+        return self.printBoard()
 
     # Board populator <-- Todo convert to GUI interface
     def placePieces(self):
@@ -89,32 +69,34 @@ class Game:
 
     # Print the console based board <-- Todo replace with GUI interface
     def printBoard(self):
+        text = ""
         # Print Letter grid
-        print(" | A  | B |  C |  D | E  | F  | G |  H |")
+        text += "  |  A  | B |  C |  D | E  | F  |  G  |  H  |\n"
         # Loop through x grid
         for i in range(0, 8):
             # Print row breakers
-            print("⚊" * 26)
+            text += ("⚊" * 21) + "\n"
             # Print number grid
-            print(i + 1, end="| ")
+            text += str(i + 1) + "| "
             # Loop through y grid
             for j in range(0, 8):
                 # Print piece at board location
-                print(str(self.board.get((i, j), "⛆")) + ' |', end=" ")
+                text += (str(self.board.get((i, j), "⛆")) + ' |' + " ")
             # Place row breakers below grid
-            print()
+            text += "\n"
         # End Row breakers
-        print("⚊" * 26)
+        text += ("⚊" * 21)
+        return text
 
     # Splits and converts the input to index locations <-- Todo convert to GUI interface
-    def parseInput(self):
+    def parseInput(self, intext):
         # Prevent improper input from crashing the program
         try:
             # Seperate the input into two variables (by space)
-            a, b = input().split()
+            a, b = intext.split()
             # Convert varaiables to a 2D matrix index
-            a = (int(a[1].lower()) - 1, ord(a[0]) - 97)
-            b = (int(b[1].lower()) - 1, ord(b[0]) - 97)
+            a = (int(a[1]) - 1, ord(a[0].lower()) - 97)
+            b = (int(b[1]) - 1, ord(b[0].lower()) - 97)
             # Tell The player the location
             print(a, b)
             # return the index
@@ -132,9 +114,8 @@ class Game:
             #check if moved piece threatens the opposing King
             if threat.isValid(position, check, self.board) and type(king) == King:
                 # Return check status of kings after
-                return print("White" if king.side else "Black" + " is in check!")
+                return print("White" if king.side else "Black", "is in check!")
 
 # Dictionary of the icons to display to console
 icons = {BLACK: {Pawn: "♙", Rook: "♖", Knight: "♘", Bishop: "♗", King: "♔", Queen: "♕"},
          WHITE: {Pawn: "♟", Rook: "♜", Knight: "♞", Bishop: "♝", King: "♚", Queen: "♛"}}
-Game()
